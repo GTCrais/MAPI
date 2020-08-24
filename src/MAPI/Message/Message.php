@@ -46,21 +46,24 @@ class Message extends MessageItem
 
     public function __construct(Element $obj, Message $parent = null)
     {
-        
+
         $this->obj = $obj;
         $this->parent = $parent;
-        
+
         $this->properties = new PropertySet(
             new PropertyStore($obj, ($parent) ? $parent->getNameId() : null)
         );
 
         $this->buildAttachments();
         $this->buildRecipients();
-        
+
 
     }
 
-    
+	public function getObject()
+	{
+		return $this->obj;
+    }
 
     protected function buildAttachments()
     {
@@ -123,7 +126,7 @@ class Message extends MessageItem
     public function getBody()
     {
         if ($this->bodyPlain) return $this->bodyPlain;
-        
+
         if ($this->properties['body']) {
             $this->bodyPlain = $this->properties['body'];
         }
@@ -155,7 +158,7 @@ class Message extends MessageItem
 
         if ($this->properties['body_html']) {
             $this->bodyHTML = $this->properties['body_html'];
-            
+
             if ($this->bodyHTML) {
                 $this->bodyHTML = trim($this->bodyHTML);
             }
@@ -186,7 +189,7 @@ class Message extends MessageItem
            $from = $senderAddr;
         }
         else {
-            $from = $this->properties['sender_smtp_address'] ?? 
+            $from = $this->properties['sender_smtp_address'] ??
                     $this->properties['sender_representing_smtp_address'] ??
                     // synthesise??
                     // for now settle on type:address eg X400:<dn>
@@ -195,8 +198,8 @@ class Message extends MessageItem
 
         if ($senderName) {
             $from = sprintf('%s <%s>', $senderName, $from);
-        }        
-        
+        }
+
         return $from;
     }
 
@@ -215,7 +218,7 @@ class Message extends MessageItem
     {
 	return $this->properties;
     }
-	
+
     public function __get($name)
     {
         if ($name == 'properties') {
